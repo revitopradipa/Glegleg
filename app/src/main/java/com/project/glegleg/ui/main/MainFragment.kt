@@ -42,10 +42,8 @@ class MainFragment : Fragment() {
     private fun setupClickListeners() {
         binding.btnAdd200ml.setOnClickListener { mainViewModel.logNewIntake(200) }
         binding.btnAdd500ml.setOnClickListener { mainViewModel.logNewIntake(500) }
-        // ... (logika klik lainnya sudah tampak benar, pastikan ID di XML cocok)
         binding.btnGoToSettings.setOnClickListener {
-            // Pastikan action ini ada di nav_graph.xml
-            // findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
+             findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
         }
     }
 
