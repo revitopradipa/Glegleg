@@ -15,8 +15,7 @@ class MainViewModel(private val repository: GleglegRepository) : ViewModel() {
         repository.getTodaysTotalIntake(todayStartMillis, endOfDay)
     }
 
-    private val _dailyGoal = MutableLiveData<Int>()
-    val dailyGoal: LiveData<Int> get() = _dailyGoal
+    val dailyGoal: LiveData<Int> = repository.getDailyGoal().asLiveData()
 
     val intakeProgressPercentage: LiveData<Int> = MediatorLiveData<Int>().apply {
         addSource(todaysTotalIntake) { intake ->
@@ -28,7 +27,6 @@ class MainViewModel(private val repository: GleglegRepository) : ViewModel() {
     }
 
     init {
-        loadDailyGoal()
         refreshDate()
     }
 
@@ -37,10 +35,6 @@ class MainViewModel(private val repository: GleglegRepository) : ViewModel() {
             val newRecord = IntakeLogRecord(amountMl = amount)
             repository.logIntake(newRecord)
         }
-    }
-
-    private fun loadDailyGoal() {
-        _dailyGoal.value = repository.getDailyGoal()
     }
 
     fun refreshDate() {
@@ -53,9 +47,7 @@ class MainViewModel(private val repository: GleglegRepository) : ViewModel() {
     }
 
     private fun calculateProgress(currentIntake: Int?, dailyGoal: Int?): Int {
-        if (currentIntake == null || dailyGoal == null || dailyGoal == 0) {
-            return 0
-        }
+        if (currentIntake == null || dailyGoal == null || dailyGoal == 0) return 0
         return ((currentIntake.toDouble() / dailyGoal.toDouble()) * 100).toInt().coerceIn(0, 100)
     }
 }

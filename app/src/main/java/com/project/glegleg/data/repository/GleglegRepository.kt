@@ -2,18 +2,18 @@ package com.project.glegleg.data.repository
 
 import androidx.lifecycle.LiveData
 import com.project.glegleg.data.local.db.entity.IntakeLogRecord
+import kotlinx.coroutines.flow.Flow
 
 interface GleglegRepository {
 
-    // --- Fungsi untuk Log Asupan (dari Database Room) ---
     suspend fun logIntake(record: IntakeLogRecord)
     fun getTodaysTotalIntake(startOfDayMillis: Long, endOfDayMillis: Long): LiveData<Int?>
-    fun getAllLogs(): LiveData<List<IntakeLogRecord>> // Untuk riwayat
+    fun getAllLogs(): LiveData<List<IntakeLogRecord>>
     suspend fun clearAllLogs()
 
-    // --- Fungsi untuk Pengaturan (dari SharedPreferences/DataStore) ---
-    fun getDailyGoal(): Int
+
+    fun getDailyGoal(): Flow<Int>
     suspend fun saveDailyGoal(goal: Int)
-    fun areRemindersEnabled(): Boolean
+    fun areRemindersEnabled(): Flow<Boolean>
     suspend fun setRemindersEnabled(enabled: Boolean)
 }

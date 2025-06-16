@@ -1,79 +1,67 @@
+// Lokasi file: app/src/main/java/com/project/glegleg/ui/settings/SettingsViewModel.kt
 package com.project.glegleg.ui.settings
 
 import android.app.Application
-import android.content.Context
-import androidx.datastore.preferences.core.*
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import com.project.glegleg.data.repository.GleglegRepository
+import com.project.glegleg.features.reminders.ReminderScheduler
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-// Inisialisasi DataStore langsung di Context
-private val Context.dataStore by preferencesDataStore(name = "user_settings")
-
+// State class tetap sama
 data class SettingsUiState(
-    val isDarkMode: Boolean = false,
-    val notificationsEnabled: Boolean = true,
-    val dailyTarget: Int = 0,
+    val dailyTarget: Int = 2000,
     val reminderEnabled: Boolean = false
 )
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-
-    // Key-key untuk pengaturan
-    private val DARK_MODE = booleanPreferencesKey("dark_mode")
-    private val NOTIFICATION = booleanPreferencesKey("notification")
-    private val DAILY_TARGET = intPreferencesKey("daily_target")
-    private val REMINDER = booleanPreferencesKey("reminder")
-
-    private val dataStore = application.applicationContext.dataStore
+// Ganti ViewModel menjadi AndroidViewModel untuk mendapatkan akses ke Context
+class SettingsViewModel(
+    private val repository: GleglegRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState
 
     init {
-        // Observasi semua setting dari DataStore
+        // Muat data awal dari repository
         viewModelScope.launch {
-            dataStore.data.collect { prefs ->
-                _uiState.value = SettingsUiState(
-                    isDarkMode = prefs[DARK_MODE] ?: false,
-                    notificationsEnabled = prefs[NOTIFICATION] ?: true,
-                    dailyTarget = prefs[DAILY_TARGET] ?: 0,
-                    reminderEnabled = prefs[REMINDER] ?: false
-                )
+            repository.getDailyGoal().collect { goal ->
+                // --- PERBAIKAN DI SINI ---
+                // Ambil state saat ini, buat salinan dengan nilai baru, lalu update
+                val currentState = _uiState.value
+                _uiState.value = currentState.copy(dailyTarget = goal)
             }
         }
-    }
-
-    fun setDarkMode(enabled: Boolean) {
         viewModelScope.launch {
-            dataStore.edit { prefs ->
-                prefs[DARK_MODE] = enabled
-            }
-        }
-    }
-
-    fun setNotificationsEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            dataStore.edit { prefs ->
-                prefs[NOTIFICATION] = enabled
+            repository.areRemindersEnabled().collect { isEnabled ->
+                // --- PERBAIKAN DI SINI ---
+                val currentState = _uiState.value
+                _uiState.value = currentState.copy(reminderEnabled = isEnabled)
             }
         }
     }
 
     fun setDailyTarget(value: Int) {
         viewModelScope.launch {
-            dataStore.edit { prefs ->
-                prefs[DAILY_TARGET] = value
-            }
+            repository.saveDailyGoal(value)
         }
     }
 
     fun setReminderEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            dataStore.edit { prefs ->
-                prefs[REMINDER] = enabled
+            repository.setRemindersEnabled(enabled)
+
+            // Hubungkan ke ReminderScheduler
+            val context = getApplication<Application>().applicationContext
+            if (enabled) {
+                ReminderScheduler.scheduleReminder(context)
+            } else {
+                ReminderScheduler.cancelReminder(context)
             }
         }
     }
