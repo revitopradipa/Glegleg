@@ -15,6 +15,9 @@
             android:id="@+id/action_mainFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
 
+        <action
+            android:id="@+id/action_mainFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
     </fragment>
 
     <fragment
@@ -22,5 +25,11 @@
         android:name="com.project.glegleg.ui.settings.SettingsFragment"
         android:label="Pengaturan"
         tools:layout="@layout/fragment_setting" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.project.glegleg.ui.history.HistoryFragment"
+        android:label="Riwayat Asupan"
+        tools:layout="@layout/fragment_history" />
 
 </navigation>

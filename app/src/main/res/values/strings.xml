@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">glegleg</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="history_list_description">Daftar riwayat asupan cairan harian</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

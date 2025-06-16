@@ -5,10 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.history.HistoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:clipToPadding="false"
+        android:padding="8dp"
+        android:visibility="gone" tools:listitem="@layout/item_intake_history" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tvEmptyHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Belum ada riwayat asupan."
+        android:textSize="16sp"
+        android:visibility="visible" /> </FrameLayout>
