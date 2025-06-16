@@ -36,6 +36,8 @@ object NotificationHelper {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
+        Log.d("NotificationHelper", "Mencoba menampilkan notifikasi...")
+
         with(NotificationManagerCompat.from(context)) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 notify(NOTIFICATION_ID, builder.build())

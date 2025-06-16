@@ -13,8 +13,8 @@ object ReminderScheduler {
     fun scheduleReminder(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val triggerTime = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(2)
-        val interval = TimeUnit.HOURS.toMillis(2)
+        val triggerTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15)
+        val interval = TimeUnit.SECONDS.toMillis(15)
 
         val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
             putExtra(Constants.EXTRA_REMINDER_ID, Constants.DEFAULT_REMINDER_ID)
